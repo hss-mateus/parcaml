@@ -96,8 +96,11 @@ let digit = satisfy (function
     | _ -> false)
 
 let word =
-  let is_whitespace = function ' ' | '\n' | '\t' -> true | _ -> false in
-  string_of_charlist <$> some (satisfy is_whitespace)
+  let alpha = satisfy (function 'a'..'z' | 'A'..'Z' -> true | _ -> false) in
+  let alphanum = alpha <|> digit in
+  alpha
+  >>= fun c -> some alphanum <|> pure []
+  >>= fun cs -> pure (string_of_charlist (c :: cs))
 
 let eof = { run = function
     | "" -> Some ((), "")
