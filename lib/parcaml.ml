@@ -51,8 +51,8 @@ let empty = { run = fun _ -> None }
 
 let optional p = { run = fun s ->
     match p.run s with
-    | Some (_, s') -> Some ((), s')
-    | None -> Some ((), s)
+    | Some (a, s') -> Some (Some(a), s')
+    | None -> Some (None, s)
   }
 
 let choice ps = List.fold_left ( <|> ) empty ps

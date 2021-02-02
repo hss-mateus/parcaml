@@ -14,7 +14,7 @@ val bind : 'a parser -> ('a -> 'b parser) -> 'b parser
 val lift : ('a -> 'b) parser -> 'a parser -> 'b parser
 
 (* Elementary abstract parsers *)
-val optional : 'a parser -> unit parser
+val optional : 'a parser -> ('a option) parser
 val some : 'a parser -> ('a list) parser
 val many : 'a parser -> ('a list) parser
 val any : char parser
