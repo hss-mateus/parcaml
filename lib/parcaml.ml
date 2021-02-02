@@ -135,6 +135,8 @@ let colon = void (char ':')
 
 let dot = void (char '.')
 
+let quote = void (char '\'')
+
 let double_quotes p = between (char '"') (char '"') p
 
 let single_quotes p = between (char '\'') (char '\'') p

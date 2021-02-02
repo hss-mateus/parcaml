@@ -42,6 +42,7 @@ val semi : unit parser
 val comma : unit parser
 val colon : unit parser
 val dot : unit parser
+val quote : unit parser
 val double_quotes : 'a parser -> 'a parser
 val single_quotes : 'a parser -> 'a parser
 
