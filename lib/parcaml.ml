@@ -1,41 +1,52 @@
 let string_of_charlist cs = List.to_seq cs |> String.of_seq
 
-type 'a parser = { run : string -> ('a * string) option }
+type 'a t = { run : string -> ('a * string) option }
 
-let ( >> ) f g x = g (f x)
+module Ops = struct
+  let ( >> ) f g x = g (f x)
 
-let ( <$> ) f p = { run = fun s ->
+  let ( <$> ) f p = { run = fun s ->
     match p.run s with
     | Some (a, s') -> Some (f a, s')
     | None -> None
   }
 
-let ( <|> ) p1 p2 = { run = fun s ->
+  let ( <|> ) p1 p2 = { run = fun s ->
     match p1.run s with
     | Some res -> Some res
     | None -> p2.run s
   }
 
-let ( >>= ) ap abp = { run = fun s ->
+  let ( >>= ) ap abp = { run = fun s ->
     Option.bind (ap.run s) (fun (a, s') -> (abp a).run s')
   }
 
-let ( <*> ) abp ap = { run = fun s ->
+  let ( <*> ) abp ap = { run = fun s ->
     Option.bind (abp.run s) (fun (f, s') ->
-        Option.map (fun (a, s'') -> (f a, s'')) (ap.run s'))
+      Option.map (fun (a, s'') -> (f a, s'')) (ap.run s'))
   }
 
-let ( <* ) ap bp = { run = fun s ->
+  let ( <* ) ap bp = { run = fun s ->
     match ap.run s with
     | Some (a, s') -> Option.map (fun (_, s'') -> (a, s'')) (bp.run s')
     | None -> None
   }
 
-let ( *> ) ap bp = { run = fun s ->
+  let ( *> ) ap bp = { run = fun s ->
     match ap.run s with
     | Some (_, s') -> Option.map (fun (b, s'') -> (b, s'')) (bp.run s')
     | None -> None
   }
+end
+
+module Syntax = struct
+  open Ops
+
+  let ( let+ ) x f = f <$> x
+  let ( let* ) = ( >>= )
+end
+
+open Ops
 
 let map = ( <$> )
 
@@ -151,4 +162,4 @@ let str_lit = double_quotes (string_of_charlist <$> many (satisfy ((!=) '"')))
 
 let char_lit = single_quotes (satisfy ((!=) '\''))
 
-let bool_lit = (string "True" *> pure true) <|> (string "False" *> pure false)
+let bool_lit = (string "true" *> pure true) <|> (string "false" *> pure false)

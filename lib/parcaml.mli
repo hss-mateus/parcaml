@@ -1,54 +1,54 @@
-type 'a parser
+type 'a t
 
-(* Operators *)
-val ( <$> ) : ('a -> 'b) -> 'a parser -> 'b parser
-val ( <|> ) : 'a parser -> 'a parser -> 'a parser
-val ( >>= ) : 'a parser -> ('a -> 'b parser) -> 'b parser
-val ( <*> ) : ('a -> 'b) parser -> 'a parser -> 'b parser
-val ( <* ) : 'a parser -> 'b parser -> 'a parser
-val ( *> ) : 'a parser -> 'b parser -> 'b parser
+module Syntax : sig
+  val ( let+ ) : 'a t -> ('a -> 'b) -> 'b t
+end
 
-(* Name aliases for operators *)
-val map : ('a -> 'b) -> 'a parser -> 'b parser
-val bind : 'a parser -> ('a -> 'b parser) -> 'b parser
-val lift : ('a -> 'b) parser -> 'a parser -> 'b parser
+module Ops : sig
+  val ( <$> ) : ('a -> 'b) -> 'a t -> 'b t
+  val ( <|> ) : 'a t -> 'a t -> 'a t
+  val ( >>= ) : 'a t -> ('a -> 'b t) -> 'b t
+  val ( <*> ) : ('a -> 'b) t -> 'a t -> 'b t
+  val ( <* ) : 'a t -> 'b t -> 'a t
+  val ( *> ) : 'a t -> 'b t -> 'b t
+end
 
-(* Elementary abstract parsers *)
-val optional : 'a parser -> ('a option) parser
-val some : 'a parser -> ('a list) parser
-val many : 'a parser -> ('a list) parser
-val any : char parser
-val choice : ('a parser) list -> 'a parser
-val none_of : ('a parser) list -> unit parser
-val count : int -> 'a parser -> ('a list) parser
-val satisfy : (char -> bool) -> char parser
+val map : ('a -> 'b) -> 'a t -> 'b t
+val bind : 'a t -> ('a -> 'b t) -> 'b t
+val lift : ('a -> 'b) t -> 'a t -> 'b t
 
-(* Elementary value parsers *)
-val char : char -> char parser
-val ws : unit parser
-val space : unit parser
-val digit : char parser
-val word : string parser
-val eof : unit parser
-val string : string -> string parser
+val optional : 'a t -> ('a option) t
+val some : 'a t -> ('a list) t
+val many : 'a t -> ('a list) t
+val any : char t
+val choice : ('a t) list -> 'a t
+val none_of : ('a t) list -> unit t
+val count : int -> 'a t -> ('a list) t
+val satisfy : (char -> bool) -> char t
 
-(* Utility parsers *)
-val between : 'o parser -> 'c parser -> 'a parser -> 'a parser
-val parens : 'a parser -> 'a parser
-val braces : 'a parser -> 'a parser
-val angles : 'a parser -> 'a parser
-val brackets : 'a parser -> 'a parser
-val semi : unit parser
-val comma : unit parser
-val colon : unit parser
-val dot : unit parser
-val quote : unit parser
-val double_quotes : 'a parser -> 'a parser
-val single_quotes : 'a parser -> 'a parser
+val char : char -> char t
+val ws : unit t
+val space : unit t
+val digit : char t
+val word : string t
+val eof : unit t
+val string : string -> string t
 
-(* Common parsers for mostly any language *)
-val int_lit : int parser
-val float_lit : float parser
-val str_lit : string parser
-val char_lit : char parser
-val bool_lit : bool parser
+val between : 'o t -> 'c t -> 'a t -> 'a t
+val parens : 'a t -> 'a t
+val braces : 'a t -> 'a t
+val angles : 'a t -> 'a t
+val brackets : 'a t -> 'a t
+val semi : unit t
+val comma : unit t
+val colon : unit t
+val dot : unit t
+val quote : unit t
+val double_quotes : 'a t -> 'a t
+val single_quotes : 'a t -> 'a t
+
+val int_lit : int t
+val float_lit : float t
+val str_lit : string t
+val char_lit : char t
+val bool_lit : bool t
